@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>漁業科技計畫成果儀表板</title>
+<meta name="description" content="民國97–114年農業部（原農委會）漁業領域科技計畫執行成果摘要綜整、主要分類成果、外部政策科學情勢與未來研究對策">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --page:#f6f7f5; --surface:#fcfcfb; --surface-2:#f0f1ed;
+  --ink:#0b0b0b; --ink-2:#52514e; --muted:#6f6d68;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10);
+  --accent:#1c5cab; --accent-soft:#e3eefb;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s8:#e34948;
+  --good:#006300; --warn:#a36b00; --crit:#d03b3b;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --page:#0d0d0d; --surface:#1a1a19; --surface-2:#232321;
+    --ink:#ffffff; --ink-2:#c3c2b7; --muted:#9a988f;
+    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+    --accent:#6da7ec; --accent-soft:#16263b;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+    --good:#0ca30c; --warn:#fab219; --crit:#e66767;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --page:#0d0d0d; --surface:#1a1a19; --surface-2:#232321;
+  --ink:#ffffff; --ink-2:#c3c2b7; --muted:#9a988f;
+  --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+  --accent:#6da7ec; --accent-soft:#16263b;
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+  --good:#0ca30c; --warn:#fab219; --crit:#e66767;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--page);color:var(--ink);font-family:"Noto Sans TC",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.65;font-size:15px}
+a{color:var(--accent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+header.top{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:20}
+header.top .wrap{display:flex;align-items:center;gap:12px;min-height:56px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:16px;white-space:nowrap}
+nav.toc{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none}
+nav.toc a{font-size:13px;color:var(--ink-2);text-decoration:none;padding:6px 10px;border-radius:6px;white-space:nowrap}
+nav.toc a:hover{background:var(--surface-2);color:var(--ink)}
+.theme-btn{border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:6px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer}
+.hero{padding:40px 0 16px}
+.hero h1{font-size:clamp(24px,3.4vw,34px);line-height:1.3;margin:0 0 8px;letter-spacing:.01em}
+.hero p.lead{color:var(--ink-2);max-width:820px;margin:0}
+.meta{font-size:12.5px;color:var(--muted);margin-top:10px}
+section{padding:28px 0}
+section>h2{font-size:22px;margin:0 0 4px}
+section>.sub{color:var(--ink-2);margin:0 0 18px;max-width:860px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.kpi .v{font-size:30px;font-weight:700;line-height:1.2}
+.kpi .v small{font-size:15px;font-weight:500;color:var(--ink-2);margin-left:3px}
+.kpi .l{font-size:13px;color:var(--ink-2)}
+.two{grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr))}
+.three{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.card h3{margin:0 0 2px;font-size:16px}
+.card .note{font-size:12.5px;color:var(--muted);margin:2px 0 10px}
+.chart{position:relative;height:300px}
+.chart.tall{height:380px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--ink-2);margin:4px 0 10px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.phase{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.phase .card{border-top:4px solid var(--accent)}
+.phase .tag{font-size:12px;color:var(--muted)}
+.phase ul{margin:8px 0 0;padding-left:18px;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:8px 8px;border-bottom:1px solid var(--grid);vertical-align:top}
+th{font-weight:500;color:var(--ink-2);font-size:12.5px}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tblwrap{overflow-x:auto}
+.catcard{border-left:5px solid var(--c)}
+.catcard .stat{font-size:12.5px;color:var(--ink-2);margin-bottom:8px}
+.catcard ul{margin:0;padding-left:18px;font-size:14px}
+.catcard li{margin:4px 0}
+.catcard li b{font-weight:500}
+.yr{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.cloud{display:flex;flex-wrap:wrap;gap:6px}
+.cloud span{background:var(--surface-2);border-radius:999px;padding:2px 10px;color:var(--ink);white-space:nowrap}
+.ctx .fig{font-size:26px;font-weight:700;color:var(--accent);line-height:1.2}
+.ctx p{margin:6px 0 0;font-size:14px;color:var(--ink-2)}
+.ctx .src{font-size:12px;margin-top:6px}
+.gap{display:grid;grid-template-columns:auto 1fr;gap:10px 12px;align-items:start}
+.gap .ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:#fff;background:var(--crit)}
+.gap .ic.w{background:var(--warn);color:#111}
+.gap h4{margin:0;font-size:15px}
+.gap p{margin:2px 0 0;font-size:14px;color:var(--ink-2)}
+.pillar{border-top:4px solid var(--c)}
+.pillar .num{font-size:12px;font-weight:700;color:var(--c)}
+.pillar h3{font-size:17px}
+.pillar .why{font-size:13.5px;color:var(--ink-2);margin:6px 0 10px}
+.pillar h5{margin:10px 0 4px;font-size:13px;color:var(--ink-2);font-weight:500}
+.pillar ul{margin:0;padding-left:18px;font-size:14px}
+.pillar li{margin:3px 0}
+.kpi-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.kpi-list span{font-size:12.5px;border:1px solid var(--border);border-radius:6px;padding:2px 8px;background:var(--surface-2)}
+.road{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.road .card h3 span{font-size:12.5px;color:var(--muted);font-weight:400;margin-left:6px}
+.road ul{margin:6px 0 0;padding-left:18px;font-size:14px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.filters input,.filters select{font:inherit;font-size:14px;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink)}
+.filters input{flex:1;min-width:200px}
+.pl-item{border-bottom:1px solid var(--grid);padding:10px 0}
+.pl-item summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.pl-item summary::-webkit-details-marker{display:none}
+.pl-item .t{font-weight:500}
+.chip{font-size:11.5px;border-radius:4px;padding:1px 6px;color:#fff;background:var(--c);white-space:nowrap}
+.pl-item .m{font-size:12.5px;color:var(--muted)}
+.pl-item .s{font-size:13.5px;color:var(--ink-2);margin:6px 0 0}
+.more{margin-top:10px}
+.btn{font:inherit;font-size:14px;border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:6px;padding:7px 14px;cursor:pointer}
+.sources{font-size:13px;color:var(--ink-2)}
+.sources li{margin:3px 0}
+footer{padding:28px 0 40px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--border);margin-top:20px}
+.callout{background:var(--accent-soft);border-radius:10px;padding:14px 16px;font-size:14px}
+.sr{position:absolute;left:-9999px}
+@media (max-width:600px){.chart{height:260px}.chart.tall{height:330px}.hero{padding-top:24px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="brand">漁業科技 97–114</div>
+  <nav class="toc" aria-label="章節">
+    <a href="#overview">總覽</a><a href="#trend">趨勢</a><a href="#cats">八大領域成果</a><a href="#themes">議題熱度</a><a href="#context">政策與科學情勢</a><a href="#gaps">缺口分析</a><a href="#strategy">未來對策</a><a href="#roadmap">推動時程</a><a href="#list">計畫檢索</a><a href="#sources">資料來源</a>
+  </nav>
+  <button class="theme-btn" id="themeBtn" type="button" aria-label="切換深淺色">深／淺色</button>
+</div></header>
+
+<main class="wrap">
+<div class="hero" id="overview">
+  <h1>漁業領域科技計畫成果綜整與未來研究對策</h1>
+  <p class="lead">彙整民國 97–114 年「漁業科技研發」執行成果摘要 18 冊，逐案解析計畫名稱、經費、關鍵詞與成果，歸納為八大研究領域；再對照國內外政策與科學情勢，就氣候變遷、全球暖化與氣候異常、糧食安全、高齡化與少子化等挑戰，提出未來漁業研究的對策與具體措施。</p>
+  <div class="meta">資料：農業部（原行政院農業委員會）科技計畫執行成果摘要（漁業領域） · 分析日期 2026-09-27 · 經費單位：新臺幣萬元</div>
+</div>
+
+<div class="grid kpis" id="kpis"></div>
+
+<section style="padding-top:22px">
+  <div class="phase" id="phases"></div>
+</section>
+
+<section id="trend">
+  <h2>年度投入與結構變化</h2>
+  <p class="sub">103 年起計畫由數十件小型分項整併為大型整合計畫，件數驟降但單件規模放大；110 年起配合農業部改制與「韌性、淨零、食安」政策，總經費回升並擴及加工、智慧化與氣候調適。</p>
+  <div class="grid two">
+    <div class="card"><h3>年度經費</h3><div class="note">萬元；滑過長條檢視數值</div><div class="chart"><canvas id="cBudget" role="img" aria-label="各年度經費長條圖"></canvas></div></div>
+    <div class="card"><h3>年度計畫件數</h3><div class="note">件；103–109 年為整合型計畫，件數低但涵蓋多個子題</div><div class="chart"><canvas id="cCount" role="img" aria-label="各年度件數長條圖"></canvas></div></div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>各領域經費年度堆疊</h3><div class="note">萬元；點選圖例可隱藏／顯示領域</div>
+    <div class="legend" id="lgStack"></div>
+    <div class="chart tall"><canvas id="cStack" role="img" aria-label="各領域經費堆疊長條圖"></canvas></div>
+  </div>
+  <div class="grid two" style="margin-top:14px">
+    <div class="card"><h3>18 年累計經費：領域排序</h3><div class="note">萬元（件數）</div><div class="chart"><canvas id="cCatTot" role="img" aria-label="各領域累計經費橫條圖"></canvas></div></div>
+    <div class="card"><h3>三階段經費占比（%）</h3><div class="note">占該階段總經費比例；紅字為變動最大者</div><div class="tblwrap"><table id="tPhase"></table></div></div>
+  </div>
+</section>
+
+<section id="cats">
+  <h2>八大領域主要成果</h2>
+  <p class="sub">依計畫名稱與關鍵詞歸類。下列為各領域具代表性、可量化的執行成果（年份為民國年），詳細內容可至下方「計畫檢索」查閱原摘要。</p>
+  <div class="grid two" id="catCards"></div>
+</section>
+
+<section id="themes">
+  <h2>跨領域議題熱度</h2>
+  <p class="sub">以計畫名稱、關鍵詞及成果摘要開頭字詞，判定是否觸及六大前瞻議題，計算各年度觸及比例。氣候調適與食安溯源明顯升溫；淨零減碳與省工自動化始終偏低。</p>
+  <div class="card">
+    <h3>各年度觸及六大議題的計畫比例（%）</h3><div class="note">單一計畫可同時觸及多個議題；103–110 年件數少，比例波動較大</div>
+    <div class="legend" id="lgTheme"></div>
+    <div class="chart tall"><canvas id="cTheme" role="img" aria-label="議題熱度折線圖"></canvas></div>
+  </div>
+  <div class="grid three" style="margin-top:14px" id="clouds"></div>
+</section>
+
+<section id="context">
+  <h2>國內外政策與科學情勢</h2>
+  <p class="sub">未來研究布局必須回應的外部驅動力（網路公開資料，出處見各卡片）。</p>
+  <div class="grid three">
+    <div class="card ctx"><div class="fig">51%</div><h3>全球水產動物首度以養殖為主</h3><p>FAO《SOFIA 2024》：2022 年全球漁業與養殖產量 2.232 億噸，養殖占水產動物 51%（9,440 萬噸）；永續捕撈資源比例降至 62.3%；2032 年水產動物產量預估再增 10%。</p><div class="src"><a href="https://www.fao.org/newsroom/detail/fao-report-global-fisheries-and-aquaculture-production-reaches-a-new-record-high/en" target="_blank" rel="noopener">FAO 新聞稿</a></div></div>
+    <div class="card ctx"><div class="fig">−20.5~24.1%</div><h3>高排放情境下漁獲潛能下滑</h3><p>IPCC SROCC：RCP8.5 情境下本世紀末全球最大漁獲潛能下降 20.5–24.1%；海洋熱浪頻率較工業化前增約 50 倍（RCP2.6 約 20 倍）。</p><div class="src"><a href="https://www.ipcc.ch/srocc/chapter/summary-for-policymakers/" target="_blank" rel="noopener">IPCC SROCC SPM</a></div></div>
+    <div class="card ctx"><div class="fig">30.35%</div><h3>我國糧食自給率 18 年新低</h3><p>112 年以熱量計糧食自給率 30.35%，穀類自給率 25.5%；水產品作為高品質動物蛋白，是提升自給與韌性的重要槓桿。</p><div class="src"><a href="https://www.cna.com.tw/news/ahel/202410140344.aspx" target="_blank" rel="noopener">中央社</a></div></div>
+    <div class="card ctx"><div class="fig">20.06%</div><h3>2025 年正式進入超高齡社會</h3><p>65 歲以上人口達 467 萬人；2025 年出生數 10.8 萬人，連續 10 年下滑。漁村勞動力老化、接班斷層與銀髮飲食需求同步浮現。</p><div class="src"><a href="https://www.cna.com.tw/news/ahel/202601090098.aspx" target="_blank" rel="noopener">中央社</a></div></div>
+    <div class="card ctx"><div class="fig">−35 億元</div><h3>極端氣候衝擊漁業產值</h3><p>媒體報導我國漁業產值年減約 35 億元，主因極端天候；農業部規劃 116 年起 4 年約 4 億元推動「智慧漁業生態系建構及數位治理」，以 AI、衛星與海溫預測漁場，並涵蓋智慧養殖與智慧漁港。</p><div class="src"><a href="https://www.ctee.com.tw/news/20260901701265-431401" target="_blank" rel="noopener">工商時報</a> · <a href="https://news.ltn.com.tw/news/life/breakingnews/5559071" target="_blank" rel="noopener">自由時報</a></div></div>
+    <div class="card ctx"><div class="fig">約 41%</div><h3>養殖占漁業總產值比重</h3><p>2023 年養殖產值約 402 億元、面積 4.35 萬公頃；白蝦國產約 1 萬噸、需求 3–4 萬噸，每年進口約 3 萬噸；產業面臨缺工、老化與氣候波動。</p><div class="src"><a href="https://www.taiwanagriweek.com/en/media-detail/636/" target="_blank" rel="noopener">臺灣智慧農漁週產業報告</a></div></div>
+    <div class="card ctx"><div class="fig">2050 淨零</div><h3>自然碳匯關鍵戰略</h3><p>農業部「自然碳匯」戰略將海洋與濕地碳匯列入：建立碳匯基線與係數、水生植物復育增匯、淡水複合養殖增匯模式與效益指標。</p><div class="src"><a href="https://agrinetzero.moa.gov.tw/zh-TW/KnowFarmNetZero/NaturalCarbonSinkStrategy" target="_blank" rel="noopener">農業淨零資訊網</a></div></div>
+    <div class="card ctx"><div class="fig">+39.5%</div><h3>科學輔導可抵銷氣候損失</h3><p>雲林文蛤（全國約 6 成產量、3,400 公頃）受極端氣候重創；藻相監測、益菌與水質管理輔導 3 年後，受輔導漁民平均收成提升 39.5%。</p><div class="src"><a href="https://www.ctee.com.tw/news/20250220701262-431401" target="_blank" rel="noopener">工商時報</a></div></div>
+    <div class="card ctx"><div class="fig">北移</div><h3>海洋邊界與漁場正在移動</h3><p>暖化使魚類分布界線改變，烏魚漁場北移；模型推估本世紀中葉臺灣珊瑚分布北移並縮減，需建立具彈性的保護區網絡與即時生態監測。</p><div class="src"><a href="https://www.marine.gov.tw/zh_tw/news/seatime/%E7%95%B6%E6%B5%B7%E6%B4%8B%E9%82%8A%E7%95%8C%E9%96%8B%E5%A7%8B%E7%A7%BB%E5%8B%95-%E6%B0%A3%E5%80%99%E8%AE%8A%E9%81%B7%E4%B8%8B%E7%9A%84%E5%8F%B0%E7%81%A3%E6%B5%B7%E5%9F%9F%E8%A7%80%E5%AF%9F-79961749" target="_blank" rel="noopener">海洋國家公園管理處</a></div></div>
+  </div>
+</section>
+
+<section id="gaps">
+  <h2>研究缺口分析</h2>
+  <p class="sub">比對 18 年計畫組合與外部驅動力，研判以下缺口（紅：優先補強；黃：需結構調整）。</p>
+  <div class="grid two">
+    <div class="card gap" id="gapA"></div>
+    <div class="card gap" id="gapB"></div>
+  </div>
+</section>
+
+<section id="strategy">
+  <h2>未來研究對策與採行措施</h2>
+  <p class="sub">以「氣候韌性、糧食安全、人力轉型、淨零永續」為主軸，建議七大研究支柱。每支柱列出研究重點、配套措施與可追蹤指標（KPI 為建議值，供綱要計畫研擬參考）。</p>
+  <div class="grid two" id="pillars"></div>
+</section>
+
+<section id="roadmap">
+  <h2>推動時程建議</h2>
+  <p class="sub">配合中程綱要計畫週期，分三階段滾動檢討。</p>
+  <div class="road">
+    <div class="card"><h3>短期<span>115–116 年</span></h3><ul>
+      <li>建置「漁業氣候風險資料中樞」：整合 62 測站、衛星海溫、漁獲與養殖監測資料，開放 API</li>
+      <li>寒害／熱浪／豪雨養殖預警上線，涵蓋文蛤、虱目魚、午仔魚、石斑、牡蠣</li>
+      <li>完成主要養殖物種與漁法碳足跡基線、藻貝碳匯量測方法學</li>
+      <li>盤點高勞力作業熱點（牡蠣剝殼、分級、投餌、清池），啟動省工機械共研</li>
+      <li>研究治理：季報分級、成果開放資料化、限閱報告最短化</li>
+    </ul></div>
+    <div class="card"><h3>中期<span>117–120 年</span></h3><ul>
+      <li>氣候情境下的資源評估（climate-informed stock assessment）納入沿近海管理魚種</li>
+      <li>耐溫／抗病品系以基因組選育商業化；RAS 與漁電共生科學養殖模組標準化推廣</li>
+      <li>鬼頭刀、土魠、黑䱛等新興物種完成量產技術並技轉</li>
+      <li>替代蛋白飼料（昆蟲、藻類、副產物）取代魚粉 30% 以上產業化</li>
+      <li>漁船電子監控（EM）與 AI 影像計數普及，遠洋數據成為國際談判資產</li>
+    </ul></div>
+    <div class="card"><h3>長期<span>121–125 年</span></h3><ul>
+      <li>海洋數位孿生：漁場、養殖場、供應鏈一體化預測</li>
+      <li>藍碳與負碳養殖納入國家溫室氣體清冊與自願減量市場</li>
+      <li>水產品自給指標與戰略存量機制，支撐糧食安全</li>
+      <li>「一人可管理的智慧漁場」模式成形，吸引青年與跨域人才</li>
+      <li>形成可輸出的熱帶／亞熱帶氣候調適漁業技術包</li>
+    </ul></div>
+  </div>
+</section>
+
+<section id="list">
+  <h2>計畫檢索</h2>
+  <p class="sub">713 件計畫，可依關鍵字、年度、領域篩選；點開可閱讀成果摘要（節錄）。</p>
+  <div class="filters">
+    <input id="q" type="search" placeholder="搜尋計畫名稱、主持人、機關、關鍵詞…" aria-label="搜尋">
+    <select id="fy" aria-label="年度"></select>
+    <select id="fc" aria-label="領域"></select>
+  </div>
+  <div class="note" id="plCount" style="font-size:13px;color:var(--muted)"></div>
+  <div id="plist"></div>
+  <div class="more"><button class="btn" id="moreBtn" type="button">顯示更多</button></div>
+</section>
+
+<section id="sources">
+  <h2>方法說明與資料來源</h2>
+  <div class="card sources">
+    <p><b>方法。</b>以 pdftotext 擷取 18 冊成果摘要（97F15、98F10 … 114F06）共 713 件計畫之名稱、編號、主持人、執行機關、經費、關鍵詞與執行成果摘要；經費以各計畫所載總經費加總。領域分類採關鍵字規則（計畫名稱優先、關鍵詞次之），整合型計畫以其主題歸入單一領域，故子題橫跨多領域者（如 110 年「漁業資源復育與回復技術」）僅計入主領域。議題熱度以計畫名稱、關鍵詞與摘要前 300 字判定。「限閱報告」或「成果報告一年後提供」之子題無法納入成果量化。</p>
+    <p><b>原始資料。</b>農業部（原行政院農業委員會）科技計畫執行成果摘要・漁業科技研發（民國 97–114 年）。</p>
+    <p><b>外部資料。</b></p>
+    <ul>
+      <li><a href="https://www.fao.org/newsroom/detail/fao-report-global-fisheries-and-aquaculture-production-reaches-a-new-record-high/en" target="_blank" rel="noopener">FAO (2024) The State of World Fisheries and Aquaculture 2024 — 新聞稿</a></li>
+      <li><a href="https://www.ipcc.ch/srocc/chapter/summary-for-policymakers/" target="_blank" rel="noopener">IPCC (2019) Special Report on the Ocean and Cryosphere — SPM</a></li>
+      <li><a href="https://www.cna.com.tw/news/ahel/202410140344.aspx" target="_blank" rel="noopener">中央社：112 年糧食自給率 30.35% 為 18 年新低</a></li>
+      <li><a href="https://www.cna.com.tw/news/ahel/202601090098.aspx" target="_blank" rel="noopener">中央社：台灣成超高齡社會</a></li>
+      <li><a href="https://www.ctee.com.tw/news/20260901701265-431401" target="_blank" rel="noopener">工商時報：台灣漁業產值年減35億 農業部砸4億元助攻找最佳漁場</a></li>
+      <li><a href="https://news.ltn.com.tw/news/life/breakingnews/5559071" target="_blank" rel="noopener">自由時報：AI 幫台灣漁船「找魚」</a></li>
+      <li><a href="https://www.taiwanagriweek.com/en/media-detail/636/" target="_blank" rel="noopener">2025 Taiwan Aquaculture Industry Market Analysis（臺灣智慧農漁週）</a></li>
+      <li><a href="https://agrinetzero.moa.gov.tw/zh-TW/KnowFarmNetZero/NaturalCarbonSinkStrategy" target="_blank" rel="noopener">農業部 農業淨零資訊網：自然碳匯關鍵戰略</a></li>
+      <li><a href="https://www.ctee.com.tw/news/20250220701262-431401" target="_blank" rel="noopener">工商時報：極端氣候重創文蛤養殖 屏科大輔導提升近4成效益</a></li>
+      <li><a href="https://www.marine.gov.tw/zh_tw/news/seatime/%E7%95%B6%E6%B5%B7%E6%B4%8B%E9%82%8A%E7%95%8C%E9%96%8B%E5%A7%8B%E7%A7%BB%E5%8B%95-%E6%B0%A3%E5%80%99%E8%AE%8A%E9%81%B7%E4%B8%8B%E7%9A%84%E5%8F%B0%E7%81%A3%E6%B5%B7%E5%9F%9F%E8%A7%80%E5%AF%9F-79961749" target="_blank" rel="noopener">海洋國家公園管理處：當海洋邊界開始移動</a></li>
+      <li><a href="https://www.fa.gov.tw/view.php?theme=FS_AR&subtheme=&id=27" target="_blank" rel="noopener">漁業署：民國113年漁業統計年報</a></li>
+    </ul>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">本儀表板為研究規劃參考之分析產出；未來對策與 KPI 為建議性質，不代表機關正式政策。原始摘要著作權屬原計畫執行單位。</div></footer>
+
+<script src="data.js"></script>
+<script>
+(function(){
+const D=window.DATA;
+const CATS=[
+ {k:'AQUA',n:'養殖技術、育種與種原',v:'--s1'},
+ {k:'COAST',n:'沿近海資源管理與增殖復育',v:'--s2'},
+ {k:'DIST',n:'遠洋漁業資源評估',v:'--s3'},
+ {k:'ENV',n:'海洋環境、氣候變遷與生態',v:'--s4'},
+ {k:'TECH',n:'智慧科技、漁船節能與資訊',v:'--s5'},
+ {k:'PROC',n:'加工、品質安全與溯源',v:'--s6'},
+ {k:'HEALTH',n:'水產動物健康、防疫與飼料',v:'--s7'},
+ {k:'MGMT',n:'漁業經濟、政策與研發管理',v:'--s8'}];
+const CM=Object.fromEntries(CATS.map(c=>[c.k,c]));
+const THEMES=[
+ {k:'climate',n:'氣候調適／韌性',v:'--s1'},
+ {k:'safety',n:'食安與溯源',v:'--s2'},
+ {k:'food',n:'糧食供應／增殖／新興物種',v:'--s3'},
+ {k:'smart',n:'智慧科技／遙測／AI',v:'--s4'},
+ {k:'labor',n:'省工／標準化／人力',v:'--s5'},
+ {k:'netzero',n:'淨零減碳／綠能',v:'--s6'}];
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const fmt=n=>n.toLocaleString('zh-TW');
+const Y=D.Y, yrs=Y.years.map(y=>y+'');
+const sum=a=>a.reduce((x,y)=>x+y,0);
+
+// KPIs
+const catTot=CATS.map(c=>({...c,b:sum(Y.catBudget[c.k]),cnt:sum(Y.catCount[c.k])}));
+const kp=[
+ [D.total.n,'件','97–114 年計畫總數'],
+ [(D.total.budget/10000).toFixed(1),'億元','累計經費'],
+ [(D.total.budget/18/10000).toFixed(2),'億元','年均經費'],
+ ['8','大領域','養殖、資源、環境、科技…'],
+ [Math.round(100*catTot[0].b/D.total.budget)+'%','','養殖育種領域經費占比（最高）'],
+ [D.orgs[0][1],'件','水產試驗所主持／參與執行（最多）']];
+document.getElementById('kpis').innerHTML=kp.map(k=>`<div class="card kpi"><div class="v">${k[0]}<small>${k[1]}</small></div><div class="l">${k[2]}</div></div>`).join('');
+
+// phases
+const PH=[['P1','97–102 年','分散型多案期','以學研單位小型計畫為主，聚焦三大洋鮪旗魚 CPUE 標準化、SPF 種苗、觀賞魚與漁船節能，平均每件約 214 萬元。'],
+ ['P2','103–109 年','整合型計畫期','整併為大型綱要與整合計畫；沿近海資源調查、種原庫、海洋漁業資料整合系統（因應歐盟黃牌）為主軸。'],
+ ['P3','110–114 年','韌性轉型期','農業部改制後聚焦耐候韌性養殖、資源增裕（鬼頭刀完全養殖）、產地鑑識、加工加值、碳足跡與漁電共生。']];
+document.getElementById('phases').innerHTML=PH.map(p=>{const d=D.per[p[0]];return `<div class="card"><div class="tag">${p[1]}</div><h3>${p[2]}</h3><div style="font-size:13px;color:var(--ink-2)">${d.n} 件 · ${fmt(d.budget)} 萬元 · 年均 ${fmt(Math.round(d.budget/(p[0]=='P1'?6:p[0]=='P2'?7:5)))} 萬元</div><p style="font-size:14px;margin:8px 0 0">${p[3]}</p></div>`}).join('');
+
+// charts
+Chart.defaults.font.family='"Noto Sans TC",system-ui,sans-serif';
+const charts=[];
+function baseOpts(extra){
+  return Object.assign({responsive:true,maintainAspectRatio:false,animation:false,
+   interaction:{mode:'index',intersect:false},
+   plugins:{legend:{display:false},tooltip:{backgroundColor:css('--surface'),titleColor:css('--ink'),bodyColor:css('--ink-2'),borderColor:css('--axis'),borderWidth:1,padding:10,boxPadding:4,usePointStyle:true}},
+   scales:{x:{grid:{display:false},border:{color:css('--axis')},ticks:{color:css('--muted'),font:{size:11}}},
+           y:{grid:{color:css('--grid')},border:{display:false},ticks:{color:css('--muted'),font:{size:11}},beginAtZero:true}}},extra||{});
+}
+function build(){
+  charts.forEach(c=>c.destroy()); charts.length=0;
+  const bar=(id,data,label,color)=>charts.push(new Chart(document.getElementById(id),{type:'bar',data:{labels:yrs,datasets:[{label,data,backgroundColor:css(color),borderRadius:{topLeft:4,topRight:4},borderSkipped:'bottom',maxBarThickness:28}]},options:baseOpts({plugins:{...baseOpts().plugins,tooltip:{...baseOpts().plugins.tooltip,callbacks:{title:i=>i[0].label+' 年',label:i=>` ${label} ${fmt(i.raw)}`}}}})}));
+  bar('cBudget',Y.budget,'經費（萬元）','--s1');
+  bar('cCount',Y.count,'件數','--s1');
+  // stacked
+  const so=baseOpts(); so.scales.x.stacked=true; so.scales.y.stacked=true;
+  so.plugins.tooltip.callbacks={title:i=>i[0].label+' 年',label:i=>i.raw?` ${i.dataset.label} ${fmt(i.raw)}`:null,footer:i=>'合計 '+fmt(sum(i.map(x=>x.raw)))+' 萬元'};
+  so.plugins.tooltip.footerColor=css('--ink');
+  charts.push(new Chart(document.getElementById('cStack'),{type:'bar',data:{labels:yrs,datasets:CATS.map(c=>({label:c.n,data:Y.catBudget[c.k],backgroundColor:css(c.v),borderColor:css('--surface'),borderWidth:{top:1,bottom:1,left:0,right:0},maxBarThickness:34}))},options:so}));
+  // cat totals horizontal
+  const sorted=[...catTot].sort((a,b)=>b.b-a.b);
+  const ho=baseOpts({indexAxis:'y'}); ho.interaction={mode:'nearest',intersect:true,axis:'y'};
+  ho.scales={x:{grid:{color:css('--grid')},border:{display:false},ticks:{color:css('--muted'),font:{size:11}}},y:{grid:{display:false},border:{color:css('--axis')},ticks:{color:css('--ink-2'),font:{size:12}}}};
+  ho.plugins.tooltip.callbacks={label:i=>` ${fmt(i.raw)} 萬元 · ${sorted[i.dataIndex].cnt} 件 · ${(100*i.raw/D.total.budget).toFixed(1)}%`};
+  charts.push(new Chart(document.getElementById('cCatTot'),{type:'bar',data:{labels:sorted.map(c=>c.n),datasets:[{data:sorted.map(c=>c.b),backgroundColor:sorted.map(c=>css(c.v)),borderRadius:{topRight:4,bottomRight:4},borderSkipped:'left',maxBarThickness:22}]},options:ho}));
+  // themes
+  const to=baseOpts(); to.scales.y.ticks.callback=v=>v+'%';
+  to.plugins.tooltip.callbacks={title:i=>i[0].label+' 年',label:i=>` ${i.dataset.label} ${i.raw}%`};
+  charts.push(new Chart(document.getElementById('cTheme'),{type:'line',data:{labels:yrs,datasets:THEMES.map(t=>({label:t.n,data:Y.theme[t.k],borderColor:css(t.v),backgroundColor:css(t.v),borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.25}))},options:to}));
+}
+// legends
+function legend(id,items,chartIdx){
+  const el=document.getElementById(id);
+  el.innerHTML=items.map((c,i)=>`<span data-i="${i}" style="cursor:pointer"><i style="background:var(${c.v})"></i>${c.n}</span>`).join('');
+  el.querySelectorAll('span').forEach(s=>s.onclick=()=>{const ch=charts[chartIdx()];const i=+s.dataset.i;const m=ch.getDatasetMeta(i);m.hidden=!m.hidden;s.style.opacity=m.hidden?.35:1;ch.update();});
+}
+build();
+legend('lgStack',CATS,()=>2); legend('lgTheme',THEMES,()=>4);
+
+// phase table
+const t=document.getElementById('tPhase');
+let h='<thead><tr><th>領域</th><th class="num">97–102</th><th class="num">103–109</th><th class="num">110–114</th><th class="num">變動</th></tr></thead><tbody>';
+const deltas=CATS.map(c=>{const p=['P1','P2','P3'].map(k=>100*D.per[k].cat[c.k]/D.per[k].budget);return {c,p,d:p[2]-p[0]}});
+const maxAbs=Math.max(...deltas.map(x=>Math.abs(x.d)));
+deltas.forEach(x=>{h+=`<tr><td><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:var(${x.c.v});margin-right:6px"></span>${x.c.n}</td>${x.p.map(v=>`<td class="num">${v.toFixed(1)}</td>`).join('')}<td class="num" style="color:${Math.abs(x.d)>=8?'var(--crit)':'var(--ink-2)'};font-weight:${Math.abs(x.d)>=8?700:400}">${x.d>0?'▲':'▼'} ${Math.abs(x.d).toFixed(1)}</td></tr>`});
+t.innerHTML=h+'</tbody>';
+
+// category cards
+const HL={
+AQUA:[['超雄性（YY）尼羅吳郭魚選育與單雄性魚苗量產，完成 2 家廠商技轉','108'],['九孔 108 品系選育，年育 10 mm 以上種苗 2–3 萬顆並移轉貢寮資源復育園區','113–114'],['牡蠣人工苗量產參數（擬球藻單一投餵、密度 ≤3 隻/mL、25–30°C）與三倍體葡萄牙牡蠣誘導技術','110–114'],['抗高溫蜆 WW/WP 品系，界定安全水溫上限 31°C，hsp60 可作耐熱指標','114'],['午仔魚安全養殖輔導：育成率最高 92.6%，示範戶每分地收益最高約 39.8 萬元','112'],['深層海水養殖：點帶石斑年產卵 394 kg，與業界合作產出 15 萬尾苗','102']],
+COAST:[['鬼頭刀完全養殖：人工繁殖第二代子代 2,400 尾，為國內首見紀錄','113'],['土魠魚苗於人工池活存約 50 天，為世界首次紀錄；持續建立種苗技術','112–114'],['定棲性魚介類種苗培育與放流：112 年 111 萬隻、113 年累計 149 萬隻（梭子蟹、鐘螺、鳳凰螺、海膽）','111–113'],['黑䱛等陸棚魚種完成種魚蓄養，首度開發受精卵孵化技術','111–114'],['示警：土魠年漁獲自 1976 年 10,400 噸降至 2024 年 789 噸','114'],['拖網減混獲裝置：柵欄間距 ≥15 mm 時漁獲逃出率逾五成，提出分階段網目管制建議','97–99']],
+DIST:[['三大洋鮪、旗魚、鯊魚 CPUE 標準化與資源評估，持續支援 ICCAT、IOTC、WCPFC 科學委員會','97–114'],['2013 年 57 名觀察員累計海上觀測 9,174 天，採集生物樣本與魚體影像','102'],['觀察員資料檢校制度化，每年校對 51–74 航次，以 R 視覺化輔助 debriefing','112–114'],['秋刀魚衛星漁場速報、阿根廷魷短中長期漁況預報可行性分析','99–108'],['更新鯊魚保育及減少延繩釣誤捕海鳥國家行動計畫','101–102']],
+ENV:[['2003 年起 62 測站漁場環境長期監測（溫鹽、營養鹽、葉綠素、浮游動物、仔稚魚），成為氣候研究基礎資料庫','97–114'],['氣候變遷下鎖管漁場偏移解析，漁海況預報以衛星通訊即時傳送棒受網漁船；eDNA 監測鎖管分布','112'],['福島含氚廢水排放前中後之海水與浮游動物放射性背景監測，撰寫應變指導方針','110–114'],['定置漁業氣候韌性：建立 2015–2024 年六處定置漁場經營資料庫','114'],['藻類碳匯量測：可食龍鬚菜淨吸收 −2.10 gCO₂/100 g/日；海門冬減少反芻動物甲烷','112–114']],
+TECH:[['新世代海洋資訊系統：整合 VMS、eLogbook、VDR、AIS，因應歐盟 IUU 黃牌，以機器學習解析作業','105–109'],['航遙測魚塭普查 77,326 口，比對漁電共生案場光電設置比例 18.63%','111'],['全國智慧型即時養殖洞察系統雛型，支援漁電共生養殖事實查核','113–114'],['11 處漁業通訊電臺 30 臺無線電汰換，建置 AI 語音工作站','113–114'],['漁船節能：風帆、二甲醚混燒、吸附式製冷、引擎積碳清除','97–98']],
+PROC:[['產地鑑識：烏魚子、九孔、虱目魚（134 件樣本）鑑別；牡蠣物種與多重元素檢驗方法經衛福部公告為建議方法','110–114'],['153 種動物用藥多重殘留快速萃取檢驗法建立','114'],['脈衝電場輔助冷凍 60 kg 試量產設備，冷凍時間最多縮短 15.67%、冰晶更小','112–113'],['3D 列印仿真海鮮魚漿墨水與易食性（質地修飾）水產品，對應銀髮飲食','113–114'],['石斑副產物開發 6 項加工品並與廠商簽署合作意向；午仔魚架售期預測模組','112']],
+HEALTH:[['SPF 草蝦／白蝦種苗量產與白點病毒研究，建立疫區防疫養殖模式','97–102'],['鏈球菌現場快篩套組（St-kit），養殖戶可自行檢測池水與魚體','111–112'],['短小芽孢桿菌 D5 益生菌應用於文蛤與水質調適','109–114'],['牡蠣疫病監測 55 場次，檢出牡蠣疱疹病毒 OsHV-1 μVar','114'],['黑水虻昆蟲粉取代金目鱸飼料 30% 魚粉仍維持正常成長；S 型輪蟲取代豐年蝦使白蝦苗育成率 60.7%（對照 41.4%）','110–114'],['外來入侵水產生物監測與高威脅物種防治 SOP','110–112']],
+MGMT:[['漁業科技成果知識平臺：以資訊圖表與儀表板擴散研究成果','110–113'],['計畫季報分級與輔導：「優良」比例由 31% 提升至 69%，建立 34 項績效指標','114'],['水生經濟動物福利科學參數與產業轉型評估（人道屠宰、致昏）','112–113'],['養殖水產品與扒網漁獲碳足跡先期研究','101–111'],['人才供需調查：牡蠣殼再利用、廢棄漁具循環產業','112–113']]};
+document.getElementById('catCards').innerHTML=CATS.map(c=>{const ct=catTot.find(x=>x.k==c.k);return `<div class="card catcard" style="--c:var(${c.v})"><h3>${c.n}</h3><div class="stat">${ct.cnt} 件 · ${fmt(ct.b)} 萬元 · 占總經費 ${(100*ct.b/D.total.budget).toFixed(1)}%</div><ul>${HL[c.k].map(h=>`<li>${h[0]} <span class="yr">（${h[1]}）</span></li>`).join('')}</ul></div>`}).join('');
+
+// clouds
+const PN={P1:'97–102 年高頻關鍵詞',P2:'103–109 年高頻關鍵詞',P3:'110–114 年高頻關鍵詞'};
+document.getElementById('clouds').innerHTML=Object.keys(PN).map(k=>{const kw=D.per[k].kw.slice(0,22);const mx=kw[0][1];return `<div class="card"><h3>${PN[k]}</h3><div class="note">字級依出現次數</div><div class="cloud">${kw.map(w=>`<span style="font-size:${12+8*w[1]/mx}px" title="${w[1]} 次">${w[0]}</span>`).join('')}</div></div>`}).join('');
+
+// gaps
+const G=[
+ ['c','淨零減碳研究量能不足','觸及淨零／綠能的計畫多數年度僅約 0–15%，且多屬碳足跡「先期研究」；缺少藻貝碳匯方法學驗證、漁船動力轉型與冷鏈節能的實證計畫。'],
+ ['c','省工自動化與人力轉型幾近空白','直接回應缺工的機械化研究僅零星（牡蠣開殼、加工設備市調，113–114 年）；缺乏人因工程、銀髮友善作業與青年接班的社會科學研究。'],
+ ['c','氣候研究偏「監測」、少「預測與決策」','62 測站監測與個別物種耐受試驗豐富，但缺少整合「氣候情境 × 資源評估 × 產業損失」的預測模型，也未與保險、預警、調適補助連動。'],
+ ['w','遠洋資源評估比重大幅下降','本資料集中遠洋領域經費占比自 97–102 年 20.2% 降至 110–114 年 1.0%；在 IUU 與國際配額競爭下，需確保科學話語權的穩定經費。'],
+ ['w','漁業經濟與社會研究僅 1.6%','產銷、市場、漁村社會與政策評估研究偏少，難以評估技術採用率與政策成本效益。'],
+ ['w','成果開放與產業化落差','多數子題標示「限閱」或延後公開；技轉與產業採用指標未系統化追蹤，資料難以跨計畫再利用。']];
+const gh=g=>`<div class="ic ${g[0]=='w'?'w':''}" aria-label="${g[0]=='w'?'需調整':'優先'}">${g[0]=='w'?'!':'●'}</div><div><h4>${g[1]}</h4><p>${g[2]}</p></div>`;
+document.getElementById('gapA').innerHTML=G.slice(0,3).map(gh).join('');
+document.getElementById('gapB').innerHTML=G.slice(3).map(gh).join('');
+
+// pillars
+const PL=[
+ ['--s1','氣候韌性海洋觀測與漁場預報','從「看得到」走向「算得準」：將長期監測轉為可操作的預報與管理決策。',
+  ['62 測站 + 衛星 + Argo + 漁船感測的海洋數位孿生，發展海洋熱浪與冷水團預警','氣候情境下的資源評估（climate-informed stock assessment），納入鎖管、鯖鰺、白帶魚、土魠等管理魚種','漁場偏移（烏魚、鎖管北移）早期偵測：eDNA、聲學、定置網長期資料','遠洋鮪類 AI 漁場預報與中西太平洋數據治理'],
+  ['與氣象署、海委會共建資料中樞並開放 API','預報結果嵌入漁民 App／漁業電臺 AI 語音播報','維持國際 RFMO 科學參與之穩定經費'],
+  ['管理魚種預報準確度 ≥70%','熱浪／寒潮預警提前 ≥7 天','開放資料集 ≥30 項']],
+ ['--s4','耐候韌性養殖','極端高溫、寒害與豪雨已成常態，養殖需從物種、系統、管理三層強化。',
+  ['基因組選育耐高溫／耐寒／抗病品系（文蛤、蜆、午仔魚、石斑、草蝦、牡蠣多倍體）','室內循環水（RAS）、分段養殖、多營養階層（IMTA）模組標準化','漁電共生科學養殖：光照、溫度、水質與生產力的定量模型','益生菌與微生物組管理應對高溫期弧菌與病毒爆發'],
+  ['寒害／熱浪養殖預警結合天然災害救助與保險','建立種苗規格標準與品系認證','示範場「科學輔導＋數據回饋」擴大複製（文蛤輔導增收 39.5% 經驗）'],
+  ['耐溫品系技轉 ≥5 件','重點物種氣候災損率下降 30%','RAS／設施養殖產量占比倍增']],
+ ['--s3','糧食安全與藍色食物供應','以水產品提升國內蛋白質自給與供應韌性。',
+  ['新興物種完全養殖產業化：鬼頭刀、土魠、黑䱛、鰈形目、大型藻類','替代蛋白飼料：昆蟲、藻類、單細胞蛋白、加工副產物，降低魚粉依賴','低值魚與副產物全魚利用（魚漿、魚油、機能性食品）','增殖放流「成效導向」：標識、遺傳追蹤與經濟效益評估'],
+  ['研擬水產品自給率與戰略存量指標','白蝦等高進口依存物種之國產化路徑','結合學校午餐與國軍採購的國產水產品通路研究'],
+  ['國產白蝦自給率由約 25% 提升至 40%','飼料魚粉替代率 ≥30%','新興物種量產技轉 ≥3 種']],
+ ['--s5','智慧化與省工：因應高齡化少子化','讓「更少的人」能管理「更大的漁場」，並設計銀髮友善的作業方式。',
+  ['AI 影像：蝦苗表型、魚群計數、攝食行為與病徵辨識','自動投餌、無人機／無人船巡檢、智慧水質控制','高勞力作業機械化：牡蠣剝殼、分級、清池、漁獲卸載','漁船電子監控（EM）取代部分人工觀察員作業'],
+  ['人因工程與銀髮友善作業標準','青年漁民與移工的數位技能培訓、智慧漁業學程','設備共享與租賃商業模式研究，降低小農導入門檻'],
+  ['示範場人力需求下降 30%','智慧設備導入戶數年增 20%','40 歲以下新進漁業從業人數止跌回升']],
+ ['--s6','淨零減碳與藍碳','把「碳」轉為漁業的新價值，而非只是成本。',
+  ['主要養殖物種、漁法與加工鏈碳足跡基線與產品標示','藻類、貝類與魚塭碳匯量測方法學，接軌國家清冊與自願減量','漁船電動化／混合動力、冷鏈節能（電場輔助冷凍／解凍）','海門冬等藻類減甲烷飼料添加物、廢棄漁具與牡蠣殼循環'],
+  ['與環境部、農業部淨零辦公室共訂方法學','以碳權／綠色金融誘因推動漁電共生與藻場復育','建立漁業碳排資訊平臺'],
+  ['完成 ≥10 項產品碳足跡','藍碳方法學 ≥2 項獲認可','漁船燃油強度下降 15%']],
+ ['--s2','食安溯源、動物福利與國際接軌','CPTPP、國際食安與福利規範提高門檻，科學證據就是市場通行證。',
+  ['產地鑑識資料庫擴充（烏魚子、牡蠣、虱目魚、鰻、九孔），導入 AI 判別','動物用藥與藻毒素現場快篩、放射性長期監測','水生動物福利：致昏、運輸與人道屠宰科學參數','GS1 數位鏈接（2027）二維條碼溯源'],
+  ['檢驗方法送衛福部公告標準化','建立國際相互承認之驗證制度','IUU 與勞動人權資料透明化'],
+  ['產地鑑識方法公告 ≥5 項','快篩到場檢測時間 ≤1 小時','外銷主力產品溯源覆蓋率 100%']],
+ ['--s7','研發治理與成果擴散','把 18 年累積的知識轉成可重複使用的資產。',
+  ['任務導向綱要計畫：以挑戰（氣候、糧食、人力、淨零）而非物種分配經費','跨部會整合：海委會、國科會、氣象署、環境部','強化漁業經濟與社會科學研究（目前僅 1.6%）','成果資料開放與機器可讀化，建立歷年計畫知識圖譜'],
+  ['縮短限閱期、建立資料管理計畫（DMP）','技轉、採用率、產值效益納入績效','引入產業共同出資與沙盒試驗'],
+  ['計畫資料開放率 ≥80%','年技轉金額成長 50%','社經研究經費占比 ≥5%']]];
+document.getElementById('pillars').innerHTML=PL.map((p,i)=>`<div class="card pillar" style="--c:var(${p[0]})"><div class="num">支柱 ${i+1}</div><h3>${p[1]}</h3><div class="why">${p[2]}</div><h5>研究重點</h5><ul>${p[3].map(x=>`<li>${x}</li>`).join('')}</ul><h5>配套措施</h5><ul>${p[4].map(x=>`<li>${x}</li>`).join('')}</ul><h5>建議指標（10 年）</h5><div class="kpi-list">${p[5].map(x=>`<span>${x}</span>`).join('')}</div></div>`).join('');
+
+// project list
+const q=document.getElementById('q'),fy=document.getElementById('fy'),fc=document.getElementById('fc'),pl=document.getElementById('plist'),mb=document.getElementById('moreBtn'),pc=document.getElementById('plCount');
+fy.innerHTML='<option value="">全部年度</option>'+[...Y.years].reverse().map(y=>`<option>${y}</option>`).join('');
+fc.innerHTML='<option value="">全部領域</option>'+CATS.map(c=>`<option value="${c.k}">${c.n}</option>`).join('');
+let shown=30;
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function render(){
+  const s=q.value.trim().toLowerCase();
+  const L=D.projs.filter(p=>(!fy.value||p.y==fy.value)&&(!fc.value||p.c==fc.value)&&(!s||(p.n+p.pi+p.o+p.k+p.s).toLowerCase().includes(s))).sort((a,b)=>b.y-a.y||b.b-a.b);
+  pc.textContent=`符合 ${L.length} 件 · 經費合計 ${fmt(sum(L.map(p=>p.b)))} 萬元`;
+  pl.innerHTML=L.slice(0,shown).map(p=>`<details class="pl-item"><summary><span class="chip" style="--c:var(${CM[p.c].v})">${CM[p.c].n}</span><span class="t">${esc(p.n)}</span><span class="m">${p.y} 年 · ${esc(p.o)} · ${esc(p.pi)} · ${fmt(p.b)} 萬元</span></summary>${p.k?`<div class="m" style="margin-top:4px">關鍵詞：${esc(p.k)}</div>`:''}<p class="s">${esc(p.s)}${p.s.length>=420?'…':''}</p></details>`).join('');
+  mb.style.display=L.length>shown?'':'none';
+}
+[q,fy,fc].forEach(e=>e.addEventListener('input',()=>{shown=30;render()}));
+mb.onclick=()=>{shown+=30;render()};
+render();
+
+// theme toggle
+const btn=document.getElementById('themeBtn');
+try{const t=localStorage.getItem('fsd-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}
+btn.onclick=()=>{const cur=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');const n=cur=='dark'?'light':'dark';document.documentElement.dataset.theme=n;try{localStorage.setItem('fsd-theme',n)}catch(e){};build();legend('lgStack',CATS,()=>2);legend('lgTheme',THEMES,()=>4);};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{build()});
+})();
+</script>
+</body>
+</html>
